@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocktail Finder Thing</title>
+    <link rel="stylesheet" href="/src/output.css">
+    <link rel="stylesheet" href="./css/main.css">
+
+    <!-- Font Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100.900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.typekit.net/tno0pkr.css">
+
+</head>
+<body class="mx-auto px-4 lg:max-w-[1200px] pt-2 lg:pt-20 3xl:pt-36">
+    <header class="flex flex-col mt-6">
+        <h1 class="font-bold justify-center text-center text-4xl">Cocktail Finder Thing</h1>
+    </header>
+    <main class="flex flex-col my-12">
+        <form class="justify-center align-middle text-center mx-20">
+            <label for="cocktailInput" class="font-bold text-lg" >Search for any cocktail recipe in the entire universe and beyond!</label>
+            <input id="cocktailInput" type="text" placeholder="Enter a cocktail name" class="border-2 rounded h-9 px-2 w-full my-4"/>
+            <button id="findButton" class="bg-gray-100 px-2 h-9 rounded hover:bg-gray-200 font-bold text-gray-600 w-full">Search</button>
+            <p id="inputError" class="text-red-500 pt-9"></p>
+        </form>
+        <div id="cards">
+            <div id="card">
+            </div>
+        </div>
+    </main>
+    <script src="./main.js" type="module"></script>
+</body>
+</html>
