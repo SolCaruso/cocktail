@@ -70,7 +70,6 @@ function findCocktail(userInput) {
             console.log(data);
             data.drinks.forEach(drink => {
               let card = document.createElement("div");
-              card.classList.add("card");
               let cardInfo = cardItem(drink);
               card.innerHTML = cardInfo;
               df.append(card);
