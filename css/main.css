@@ -30,3 +30,7 @@ body {
   background-color: rgba(255, 255, 255, 0.334);
   backdrop-filter: blur(6px);
 }
+
+.more:hover, .less:hover {
+  text-decoration: underline;
+}

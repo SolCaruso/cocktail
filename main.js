@@ -23,13 +23,16 @@ function init() {
             });
             cards.innerHTML = "";
             cards.appendChild(df);
+
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', openDialog);
+            });
+
+            attachMoreLessListeners();
         })
         .catch((err) => {
             console.log(err);
         });
-
-    // Dialog Popover
-    document.getElementById('card').addEventListener('click', openDialog);
 }
 
 function openDialog(ev) {
@@ -38,13 +41,36 @@ function openDialog(ev) {
         dialog.showModal();
         let btn = dialog.querySelector('.btnClose');
         btn.addEventListener('click', closeDialog);
+        attachMoreLessListeners(dialog);
     }
 }
 
 function closeDialog(ev) {
     const dialog = ev.target.closest('dialog');
     dialog.close();
-    ev.stopPropagation();
+    ev.stopPropagation(); 
+}
+
+function attachMoreLessListeners(container = document) {
+    container.querySelectorAll('.more').forEach(more => {
+        more.addEventListener('click', function() {
+            const instructionsElem = this.parentElement;
+            const fullText = instructionsElem.getAttribute('data-full-text');
+            instructionsElem.innerHTML = `${fullText} <span class="text-blue-500 cursor-pointer less">less...</span>`;
+            attachLessListener(instructionsElem.querySelector('.less'));
+        });
+    });
+}
+
+function attachLessListener(less) {
+    less.addEventListener('click', function() {
+        const instructionsElem = this.parentElement;
+        const fullText = instructionsElem.getAttribute('data-full-text');
+        const maxLength = 100;
+        const truncatedText = fullText.substring(0, maxLength) + '...';
+        instructionsElem.innerHTML = `${truncatedText} <span class="text-blue-500 cursor-pointer more">more...</span>`;
+        attachMoreLessListeners(instructionsElem); 
+    });
 }
 
 (() => {
@@ -90,6 +116,12 @@ function findCocktail(userInput) {
             });
             cards.innerHTML = "";
             cards.appendChild(df);
+
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', openDialog);
+            });
+
+            attachMoreLessListeners();
         })
         .catch((err) => {
             console.log(err);
@@ -97,3 +129,5 @@ function findCocktail(userInput) {
 }
 
 window.addEventListener("DOMContentLoaded", init);
+
+
