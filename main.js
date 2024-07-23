@@ -41,7 +41,7 @@ function openDialog(ev) {
         const drinkName = card.querySelector('h2').innerText;
         const originalUrl = window.location.href;
         const newUrl = new URL(originalUrl);
-        newUrl.searchParams.set('drink',encodeURIComponent(drinkName));
+        newUrl.searchParams.set('drink',drinkName);
 
         history.pushState({ drinkName, originalUrl}, '', newUrl.href)
         dialog.showModal();
