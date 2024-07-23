@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cocktail Finder Thing</title>
@@ -14,23 +15,35 @@
     <link rel="stylesheet" href="https://use.typekit.net/tno0pkr.css">
 
 </head>
+
 <body class="mx-auto px-4 lg:max-w-[1200px] pt-2 lg:pt-20 3xl:pt-36">
+
     <header class="flex flex-col mt-6">
+
         <h1 class="font-bold justify-center text-center text-2xl sm:text-4xl">Cocktail Finder Thing</h1>
+
     </header>
+
     <main class="flex flex-col mb-12 mt-6 lg:mt-10">
+
         <form class="justify-center align-middle text-center 2xs:mx-5 xs:mx-10 sm:mx-20">
             <label for="cocktailInput" class="font-bold text-sm leading-3 sm:text-lg" >Search for any cocktail recipe in the entire universe and beyond!</label>
             <input id="cocktailInput" type="text" placeholder="Enter a cocktail name" class="border-2 rounded h-9 px-2 w-full my-4"/>
             <button id="findButton" class="bg-gray-100 px-2 h-9 rounded hover:bg-gray-200 font-bold text-gray-600 w-full">Search</button>
             <p id="inputError" class="text-red-500 pt-9"></p>
         </form>
-        <div id="cards" class="my-12 mx-6" >
+
+        <div id="cards" class="my-12 mx-6">
+
             <div id="card" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-16 sm:gap-6 drop-shadow-md">
             </div>
+
         </div>
+
     </main>
+
     <script src="./main.js" type="module"></script>
+    
 </body>
 </html>
 
