@@ -24,10 +24,12 @@ function init() {
             cards.innerHTML = "";
             cards.appendChild(df);
 
+            // Attach dialog open listeners after cards are added to the DOM
             document.querySelectorAll('.card').forEach(card => {
                 card.addEventListener('click', openDialog);
             });
 
+            // Attach more/less functionality
             attachMoreLessListeners();
         })
         .catch((err) => {
@@ -37,16 +39,19 @@ function init() {
 
 function openDialog(ev) {
     if (ev.target.closest('.card')) {
-        const dialog = ev.target.closest('.card').querySelector('#cardDialog');
+        const card = ev.target.closest('.card');
         const drinkName = card.querySelector('h2').innerText;
+        const dialog = card.querySelector('#cardDialog');
         const originalUrl = window.location.href;
         const newUrl = new URL(originalUrl);
-        newUrl.searchParams.set('drink',drinkName);
+        newUrl.searchParams.set('drink', drinkName);
 
-        history.pushState({ drinkName, originalUrl}, '', newUrl.href)
+        history.pushState({ drinkName, originalUrl }, '', newUrl.href);
         dialog.showModal();
         let btn = dialog.querySelector('.btnClose');
         btn.addEventListener('click', closeDialog);
+
+        // Attach more/less functionality within the dialog
         attachMoreLessListeners(dialog);
     }
 }
@@ -54,8 +59,8 @@ function openDialog(ev) {
 function closeDialog(ev) {
     const dialog = ev.target.closest('dialog');
     dialog.close();
-    history.back();
-    ev.stopPropagation(); 
+    history.back(); // Restores the original URL
+    ev.stopPropagation(); // Prevents the event from bubbling up to parent elements
 }
 
 function attachMoreLessListeners(container = document) {
@@ -63,7 +68,7 @@ function attachMoreLessListeners(container = document) {
         more.addEventListener('click', function() {
             const instructionsElem = this.parentElement;
             const fullText = instructionsElem.getAttribute('data-full-text');
-            instructionsElem.innerHTML = `${fullText} <span class="text-blue-500 cursor-pointer less">less...</span>`;
+            instructionsElem.innerHTML = `${fullText} <span class="text-blue-500 cursor-pointer hover:underline less">less...</span>`;
             attachLessListener(instructionsElem.querySelector('.less'));
         });
     });
@@ -75,8 +80,8 @@ function attachLessListener(less) {
         const fullText = instructionsElem.getAttribute('data-full-text');
         const maxLength = 100;
         const truncatedText = fullText.substring(0, maxLength) + '...';
-        instructionsElem.innerHTML = `${truncatedText} <span class="text-blue-500 cursor-pointer more">more...</span>`;
-        attachMoreLessListeners(instructionsElem); 
+        instructionsElem.innerHTML = `${truncatedText} <span class="text-blue-500 cursor-pointer hover:underline more">more...</span>`;
+        attachMoreLessListeners(instructionsElem); // Reattach the more/less listeners
     });
 }
 
@@ -124,10 +129,12 @@ function findCocktail(userInput) {
             cards.innerHTML = "";
             cards.appendChild(df);
 
+            // Attach dialog open listeners after cards are added to the DOM
             document.querySelectorAll('.card').forEach(card => {
                 card.addEventListener('click', openDialog);
             });
 
+            // Attach more/less functionality
             attachMoreLessListeners();
         })
         .catch((err) => {
@@ -136,5 +143,3 @@ function findCocktail(userInput) {
 }
 
 window.addEventListener("DOMContentLoaded", init);
-
-
