@@ -38,6 +38,12 @@ function init() {
 function openDialog(ev) {
     if (ev.target.closest('.card')) {
         const dialog = ev.target.closest('.card').querySelector('#cardDialog');
+        const drinkName = card.querySelector('h2').innerText;
+        const originalUrl = window.location.href;
+        const newUrl = new URL(originalUrl);
+        newUrl.searchParams.set('drink',drinkName);
+
+        history.pushState({ drinkName, originalUrl}, '', newUrl.href)
         dialog.showModal();
         let btn = dialog.querySelector('.btnClose');
         btn.addEventListener('click', closeDialog);
@@ -48,6 +54,7 @@ function openDialog(ev) {
 function closeDialog(ev) {
     const dialog = ev.target.closest('dialog');
     dialog.close();
+    history.back();
     ev.stopPropagation(); 
 }
 
