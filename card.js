@@ -32,13 +32,18 @@ export function cardItem(drink) {
                   <p class='text-gray-600'>${ingredientsList}.</p>
                   <div class="w-full flex justify-center text-center mt-4">
                       <button class="bg-gray-100 px-2 h-9 rounded hover:bg-gray-200 font-bold text-gray-600 w-1/2 m-1 btnClose">Close</button>
-                      <button class="bg-blue-600 px-2 h-9 rounded hover:bg-blue-500 font-bold text-white w-1/2 m-1 text-center">Add<span class="hidden sm:inline"> to favourites</span></button>
+                      <button id="addFavourites" class="bg-blue-600 px-2 h-9 rounded hover:bg-blue-500 font-bold text-white w-1/2 m-1 text-center faveBtn" data-drink='${drink.strDrink}' >Add<span class="hidden sm:inline"> to favourites</span></button>
                   </div>
               </div>
           </dialog>
-      </div>
+      </div> 
   `;
   return cardLayout;
 }
+
+
+// data-drink='${JSON.stringify(drink)}'
+
+
 
 
