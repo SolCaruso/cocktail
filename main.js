@@ -6,7 +6,9 @@ function init() {
     console.log("Fetching Mojito Cocktail API");
     let cards = document.getElementById("card");
     let randomUrl = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=mojito`;
-    fetch(randomUrl)
+    homeLoad();
+    function homeLoad(){
+        fetch(randomUrl)
         .then((res) => {
             if (!res) {
                 throw new Error("Error with initial API fetch");
@@ -31,13 +33,13 @@ function init() {
                 document.querySelectorAll('.card').forEach(card => {
                     card.addEventListener('click', openDialog);
                 });
-
-                attachMoreLessListeners();
             }
         })
         .catch((err) => {
             console.log(err);
         });
+
+    }
 
     function openDialog(ev) {
         if (ev.target.closest('.card')) {
@@ -53,20 +55,19 @@ function init() {
 
     let faveList = [];
 
-    function addFave() {
-        let faveBtn = document.querySelector('.faveBtn');
+    function addFave(ev) {
+        ev.preventDefault();
+        let faveBtn = ev.target.closest('.faveBtn');
+        console.log(faveBtn);
         let addFave = faveBtn.dataset.drink;
         console.log('fave added');
-
+        
         if(addFave) {
-            faveList.push(addFave);
-            localStorage.setItem("Favourites", faveList);
+            faveList.push(JSON.parse(addFave));
+            console.log(faveList);
+            localStorage.setItem("Favourites", JSON.stringify(faveList));
         }
     }
-
-    // let findFaves = document.getElementById('findFaves');
-    // findFaves.addEventListener('click', openFaves);
-
    
     function closeDialog(ev) {
         let dialog = ev.target.closest('dialog');
@@ -75,15 +76,19 @@ function init() {
     }
 
     function attachMoreLessListeners(container = document) {
-        container.querySelectorAll('.more').forEach(more => {
-            more.addEventListener('click', function () {
-                let instructionsElem = this.parentElement;
-                let fullText = instructionsElem.getAttribute('data-full-text');
-                instructionsElem.innerHTML = `${fullText} <span class="text-blue-500 cursor-pointer less">less...</span>`;
-                attachLessListener(instructionsElem.querySelector('.less'));
-            });
-        });
+        console.log(container);
+        let more = container.querySelector('.more')
+            console.log(more);
+            more.addEventListener('click', moreText);
     }
+
+    function moreText () {
+        let instructionsElem = this.parentElement;
+        console.log(instructionsElem)
+        let fullText = instructionsElem.getAttribute('data-full-text');
+        instructionsElem.innerHTML = `${fullText} <span class="text-blue-500 cursor-pointer less">less...</span>`;
+        attachLessListener(instructionsElem.querySelector('.less'));
+    };
 
     function attachLessListener(less) {
         less.addEventListener('click', function () {
@@ -99,6 +104,38 @@ function init() {
     (() => {
         document.getElementById("findButton").addEventListener("click", searchHandle);
     })();
+
+    (() => {
+        document.getElementById("findFaves").addEventListener("click", findFaves);
+    })();
+
+    (() => {
+        document.getElementById('home-btn').addEventListener("click", homeBtn);
+    })();
+
+    function homeBtn(ev) {
+        ev.preventDefault();
+        homeLoad();
+    };
+
+    function findFaves(ev) {
+        ev.preventDefault();
+        console.log("findFaves function triggered");
+        let df = new DocumentFragment();
+        cards.innerHTML = "";
+        faveList.forEach(drink => {
+            let card = document.createElement("div");
+            card.classList.add("card");
+            let cardInfo = cardItem(drink);
+            card.innerHTML = cardInfo;
+            df.append(card);
+        });
+        cards.innerHTML = "";
+        cards.appendChild(df);
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', openDialog);
+        });
+    };
 
     let inputError = document.getElementById("inputError");
 
@@ -118,7 +155,6 @@ function init() {
     function findCocktail(userInput) {
         console.log("Fetching from API");
         let cards = document.getElementById("card");
-        cards.innerHTML = "";
         let url = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${userInput}`;
         fetch(url)
             .then((res) => {
@@ -130,6 +166,10 @@ function init() {
             .then((data) => {
                 let df = new DocumentFragment();
                 console.log(data);
+                if (data.drinks==null) {
+                     inputError.textContent = "No cocktails found with that name. Please try again."
+                } else {
+                cards.innerHTML = "";
                 data.drinks.forEach(drink => {
                     let card = document.createElement("div");
                     card.classList.add("card");
@@ -142,7 +182,7 @@ function init() {
                 document.querySelectorAll('.card').forEach(card => {
                     card.addEventListener('click', openDialog);
                 });
-                attachMoreLessListeners();
+            }
             })
             .catch((err) => {
                 console.log(err);
