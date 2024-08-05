@@ -61,13 +61,27 @@ function init() {
         console.log(faveBtn);
         let addFave = faveBtn.dataset.drink;
         console.log('fave added');
+   
         
         if(addFave) {
             faveList.push(JSON.parse(addFave));
             console.log(faveList);
             localStorage.setItem("Favourites", JSON.stringify(faveList));
+            faveBtn.classList.add("hidden");
         }
     }
+
+    // function removeFave(ev) {
+    //     ev.preventDefault();
+    //     let remBtn = ev.target.closest('.remFave');
+    //     let remFave = remBtn.dataset.drink;
+    //     console.log(remFave);
+    //     if(remFave) {
+    //         faveList.splice(JSON.parse(remFave));
+    //         console.log(faveList);
+    //         localStorage.setItem("Favourites", JSON.stringify(faveList));
+    //     }
+    // }
    
     function closeDialog(ev) {
         let dialog = ev.target.closest('dialog');
@@ -112,6 +126,12 @@ function init() {
     (() => {
         document.getElementById('home-btn').addEventListener("click", homeBtn);
     })();
+
+    // (() => {
+    //     document.getElementById('remFave').addEventListener("click", removeFave);
+    // })();
+
+
 
     function homeBtn(ev) {
         ev.preventDefault();
