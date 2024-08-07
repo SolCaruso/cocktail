@@ -41,8 +41,9 @@
 
         <dialog id="cardDialog" class='rounded-2xl p-6 shadow-2xl mx-8 sm:mx-auto'>
             <div class='flex flex-col h-full'>
-                <img class="rounded-2xl w-full" src='#' alt='drink.strDrink'>
+                <img class="rounded-2xl w-full" src='#' alt='#'>
                 <h3 class="text-center text-xl mt-4 font-bold">Name</h3>
+                <p></p>
                 <!-- <p class="text-center text-lg pb-4 max-w-2xl mx-auto flex-grow mt-4 instructions" data-full-text="${instructions}">
                     {truncatedInstructions}
                     ${hasMore ? `<span class="text-blue-500 hover:underline cursor-pointer more">more...</span>` : ''}
@@ -51,8 +52,8 @@
                 <!-- <p class='text-gray-600'>${ingredientsList}.</p> -->
                 <div class="w-full flex justify-center text-center mt-4 faveBtns">
                     <button class="bg-gray-100 px-2 h-9 rounded hover:bg-gray-200 font-bold text-gray-600 w-1/2 m-1 btnClose">Close</button>
-                    <button class="bg-blue-600 px-2 h-9 rounded hover:bg-blue-500 font-bold text-white w-1/2 m-1 text-center faveBtn" data-drink='${JSON.stringify(drink)}' >Add<span class="hidden sm:inline"> to favourites</span></button>
-                    <button id="remFave" class="bg-red-600 px-2 h-9 rounded hover:bg-red-500 font-bold text-white w-1/2 m-1 text-center remFave hidden" data-drink='${JSON.stringify(drink)}' >Unfavourite</button>
+                    <button class="bg-blue-600 px-2 h-9 rounded hover:bg-blue-500 font-bold text-white w-1/2 m-1 text-center faveBtn cardData" data-drink="">Add<span class="hidden sm:inline"> to favourites</span></button>
+                    <!-- <button id="remFave" class="bg-red-600 px-2 h-9 rounded hover:bg-red-500 font-bold text-white w-1/2 m-1 text-center remFave hidden" data-drink='#'>Unfavourite</button> -->
                 </div>
             </div>
         </dialog>
@@ -61,8 +62,8 @@
 
     <script src="./main.js" type="module"></script>
 
-    <script>
-        
+    <!-- <script>
+
         const maxLength = 100;
         let instructions = drink.strInstructions;
         let truncatedInstructions = instructions.length > maxLength ? instructions.substring(0, maxLength) + '...' :
@@ -79,7 +80,7 @@
             }
         }
         let ingredientsList = ingredients.join(', ');
-    </script>
+    </script> -->
 
 
 </body>

@@ -1,13 +1,15 @@
-import {
-    cardItem
-} from "./card.js";
+import { cardItem} from "./card.js";
 
 function init() {
 
 
+    // GLOBAL VARIABLES
+
+    let cards = document.getElementById("card");
+
+
     // HOME SCREEN CARDS
 
-    let resultList;
     homeLoad();
 
     function homeBtn(ev) {
@@ -21,7 +23,6 @@ function init() {
     
     function homeLoad(){
         console.log("Fetching Mojito Cocktail API");
-        let cards = document.getElementById("card");
         let randomUrl = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=mojito`;
         fetch(randomUrl)
         .then((res) => {
@@ -32,15 +33,13 @@ function init() {
         })
         .then((data) => {
             if (data.drinks) {
-                console.log(data);
-                resultList = data.drinks;
                 let df = new DocumentFragment();
                 data.drinks.forEach(drink => {
-                let card = document.createElement("div");
-                card.classList.add("card");
-                card.innerHTML = cardItem(drink);
-                
-                df.append(card);
+                    let card = document.createElement("div");
+                    card.dataset.drink = JSON.stringify(drink);
+                    card.classList.add("card");
+                    card.innerHTML = cardItem(drink);
+                    df.append(card);
                 });
                 
                 cards.innerHTML = "";
@@ -54,12 +53,10 @@ function init() {
         });
     }
 
-
     // SEARCH FUNCTIONALITY 
 
     function findCocktail(userInput) {
         console.log("Fetching from API");
-        let cards = document.getElementById("card");
         let url = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${userInput}`;
         fetch(url)
             .then((res) => {
@@ -70,7 +67,6 @@ function init() {
             })
             .then((data) => {
                 let df = new DocumentFragment();
-                console.log(data);
                 if (data.drinks==null) {
                      inputError.textContent = "No cocktails found with that name. Please try again."
                 } else {
@@ -79,19 +75,34 @@ function init() {
                     let card = document.createElement("div");
                     card.classList.add("card");
                     let cardInfo = cardItem(drink);
+                    card.dataset.drink = JSON.stringify(drink);
                     card.innerHTML = cardInfo;
                     df.append(card);
                 });
                 cards.innerHTML = "";
                 cards.appendChild(df);
-                document.querySelectorAll('.card').forEach(card => {
-                    card.addEventListener('click', openDialog);
-                });
+
+                document.querySelector('#cards').addEventListener('click', openDialog);
+              
             }
             })
             .catch((err) => {
                 console.log(err);
             });
+    }
+
+    let inputError = document.getElementById("inputError");
+
+    function searchHandle(ev) {
+        ev.preventDefault();
+        inputError.textContent = ``;
+        let userInput = document.getElementById("cocktailInput").value.trim();
+        document.getElementById("cocktailInput").value = "";
+        if (userInput) {
+            findCocktail(userInput);
+        } else {
+            inputError.textContent = 'Please enter a real cocktail name.';
+        }
     }
 
     (() => {
@@ -104,10 +115,11 @@ function init() {
     function openDialog(ev) {
         if (ev.target.closest('.card')) {
             let cardInfo = ev.target.closest('.card');
-            console.log(cardInfo);
             let imgSrc = cardInfo.querySelector('img').getAttribute('src');
+            let drink = cardInfo.dataset.drink;
             let dialog = document.getElementById('cardDialog');
             dialog.querySelector('img').setAttribute('src', imgSrc);
+            dialog.querySelector('.cardData').setAttribute('data-drink', drink);
             let cardName = cardInfo.querySelector('h2').textContent;
             dialog.querySelector('h3').textContent = cardName;
             dialog.showModal();
@@ -128,68 +140,59 @@ function init() {
 
     // FAVOURITES FUNCTIONALITY
 
-    let faveList = [];
+    let faveList = JSON.parse(localStorage.getItem("Favourites")) || [];
+
+    function pushFave(value) {
+        try {
+            let parsedValue = JSON.parse(value);
+            let exists = faveList.some(fave => JSON.stringify(fave) === JSON.stringify(parsedValue));
+
+            if (!exists) {
+                faveList.push(parsedValue);
+                localStorage.setItem("Favourites", JSON.stringify(faveList));
+                console.log('fave added');
+            } else {
+                console.log("Drink already in favourites");
+            }
+        } catch (err) {
+            console.error("Invalid JSON string", err);
+        }
+    };
 
     function addFave(ev) {
         ev.preventDefault();
-        let faveBtn = ev.target.closest('.faveBtn');
-        console.log(faveBtn);
-        let addFave = faveBtn.dataset.drink;
-        console.log('fave added');
-        let remFave = document.querySelector('dialog').querySelector('.remFave');
-        console.log(remFave);
-   
+
+        let addData = ev.target.closest('.cardData').dataset.drink;
         
-        if(addFave) {
-            // faveList.push(JSON.parse(addFave));
-            // console.log(faveList);
-            // localStorage.setItem("Favourites", JSON.stringify(faveList));
-            faveBtn.classList.add("hidden");
-            console.log(remFave);
-            remFave.classList.remove("hidden");
-
+        if(addData) {
+            pushFave(addData);
+            
+        } else {
+            console.log("No data-drink attribute found");
         }
-    }
-
-    function findFaves(ev) {
-        ev.preventDefault();
-        console.log("findFaves function triggered");
-        let df = new DocumentFragment();
-        cards.innerHTML = "";
-        faveList.forEach(drink => {
-            let card = document.createElement("div");
-            card.classList.add("card");
-            let cardInfo = cardItem(drink);
-            card.innerHTML = cardInfo;
-            df.append(card);
-        });
-        cards.innerHTML = "";
-        cards.appendChild(df);
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', openDialog);
-        });
     };
 
-    let inputError = document.getElementById("inputError");
 
-    function searchHandle(ev) {
-        ev.preventDefault();
-        console.log("nameFind function triggered");
-        inputError.textContent = ``;
-        let userInput = document.getElementById("cocktailInput").value.trim();
-        document.getElementById("cocktailInput").value = "";
-        if (userInput) {
-            findCocktail(userInput);
-        } else {
-            inputError.textContent = 'Please enter a real cocktail name.';
-        }
-    }
+    // function findFaves(ev) {
+    //     ev.preventDefault();
+    //     console.log("findFaves function triggered");
+    //     let df = new DocumentFragment();
+    //     cards.innerHTML = "";
+    //     faveList.forEach(drink => {
+    //         let card = document.createElement("div");
+    //         card.classList.add("card");
+    //         let cardInfo = cardItem(drink);
+    //         card.innerHTML = cardInfo;
+    //         df.append(card);
+    //     });
+    //     cards.innerHTML = "";
+    //     cards.appendChild(df);
+    //     document.querySelector('#cards').addEventListener('click', openDialog);
+    // };
 
-    (() => {
-        document.getElementById("findFaves").addEventListener("click", findFaves);
-    })();
-
-
+    // (() => {
+    //     document.getElementById("findFaves").addEventListener("click", findFaves);
+    // })();
 
     // function removeFave(ev) {
     //     ev.preventDefault();
@@ -202,8 +205,9 @@ function init() {
     //         localStorage.setItem("Favourites", JSON.stringify(faveList));
     //     }
     // }
-   
 
+
+    // MORE/LESS FUNCTIONALITY
 
     // function attachMoreLessListeners(container = document) {
     //     console.log(container);
