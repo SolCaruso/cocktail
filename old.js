@@ -13,6 +13,7 @@ function init() {
 
 
 
+
     // ––––––––––––––––––––––––––––––––––– HOME SCREEN CARDS ––––––––––––––––––––––––––––––––––––––– //
 
     homeLoad();
@@ -60,17 +61,7 @@ function init() {
         });
     }
 
-    // function updateToggle() {
-    //     allCards.forEach(card => {
-    //         const drink = card.dataset.drink;
-    //         const isFavourited = faveList.some(fave => fave.idDrink === drink);
 
-    //         if (isFavourited) {
-    //             card.dataset.toggle = 'true';
-    //         }
-    //     });
-
-    // };
 
 
     // ––––––––––––––––––––––––––––––––––– SEARCH FUNCTIONALITY ––––––––––––––––––––––––––––––––––––– //
@@ -136,7 +127,6 @@ function init() {
 
     function openDialog(ev) {
         if (ev.target.closest('.card')) {
-            ev.preventDefault();
             let cardInfo = ev.target.closest('.card');
             let imgSrc = cardInfo.querySelector('img').getAttribute('src');
             let drink = cardInfo.dataset.drink;
@@ -162,8 +152,8 @@ function init() {
             } else if (toggle === 'true') {
                 faveBtn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
                 faveBtn.classList.add('bg-red-600', 'hover:bg-red-500');
-                faveBtn.textContent = 'Remove favourite';
-                faveBtn.addEventListener('click', addFave);
+                faveBtn.textContent = 'Remove';
+                faveBtn.addEventListener('click', removeFave);
             }
 
             btn.addEventListener('click', closeDialog);
@@ -173,12 +163,14 @@ function init() {
     }
 
     function closeDialog(ev) {
-        ev.preventDefault();
         let dialog = ev.target.closest('dialog');
-        // updateToggle();
         dialog.close();
         ev.stopPropagation();
+
+        
     }
+
+
 
 
     // –––––––––––––––––––––––––––––––––– FAVOURITES FUNCTIONALITY –––––––––––––––––––––––––––––––––– //
@@ -187,10 +179,8 @@ function init() {
     function addFave(ev) {
         ev.preventDefault();
         let addData = ev.target.closest('.cardData').dataset.drink;
+        let toggle = ev.target.closest('.cardData').dataset.toggle;
         let faveBtn = ev.target.closest('.cardData');
-        let id = ev.target.closest('.cardData').dataset.id;
-        let allCards = document.querySelectorAll('.card');
-      
 
         try {
             let parsedValue = JSON.parse(addData);
@@ -200,34 +190,48 @@ function init() {
                 faveList.push(parsedValue);
                 localStorage.setItem("Favourites", JSON.stringify(faveList));
                 console.log('fave added');
-                faveBtn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
+                toggle = 'true';
                 faveBtn.classList.add('bg-red-600', 'hover:bg-red-500');
-                faveBtn.textContent = 'Remove favourite';
-                allCards.forEach(card => {
-                   if (card.dataset.id === id) {
-                       card.dataset.toggle = 'true';
-                   }
-                });
+                faveBtn.textContent = 'Remove';
           
             } else {
-                faveList.splice(parsedValue);
-                localStorage.removeItem("Favourites", JSON.stringify(faveList));
-                console.log('fave removed');
-                faveBtn.classList.remove('bg-red-600', 'hover:bg-red-500');
-                faveBtn.classList.add('bg-blue-600', 'hover:bg-blue-500');
-                faveBtn.textContent = 'Add to favourites';
-                allCards.forEach(card => {
-                    if (card.dataset.id === id) {
-                        card.dataset.toggle = 'false';
-                    }
-                 });
+                console.log("Drink already in favourites");
+                toggle = 'true';
             }
-            
         } catch (err) {
             console.error("Invalid JSON string", err);
         }
     
     };
+
+    function removeFave(ev) {
+        ev.preventDefault();
+        let addData = ev.target.closest('.cardData').dataset.drink;
+        let toggle = ev.target.closest('.cardData').dataset.toggle;
+        let faveBtn = ev.target.closest('.cardData');
+
+        try {
+            let parsedValue = JSON.parse(addData);
+            let exists = faveList.some(fave => JSON.stringify(fave) === JSON.stringify(parsedValue));
+           
+            if (exists) {
+                faveList.parse(parsedValue);
+                localStorage.removeItem("Favourites", JSON.stringify(faveList));
+                console.log('fave removed');
+                toggle = 'false';
+                faveBtn.classList.add('bg-blue-600', 'hover:bg-blue-500');
+                faveBtn.textContent = 'Add to favourites';
+          
+            } else {
+                console.log("Drink is not in favourites");
+                toggle = 'false';
+            }
+        } catch (err) {
+            console.error("Invalid JSON string", err);
+        }
+    
+    };
+
 
     // function findFaves(ev) {
     //     ev.preventDefault();
@@ -300,4 +304,3 @@ function init() {
 }
 
 window.addEventListener("DOMContentLoaded", init);
-
