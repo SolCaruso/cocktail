@@ -3,13 +3,12 @@ import { cardItem} from "./card.js";
 function init() {
 
 
-
-
      // ––––––––––––––––––––––––––––––––––– GLOBAL VARIABLES ––––––––––––––––––––––––––––––––––––––– //
 
     let cards = document.getElementById("card");
     let faveList = JSON.parse(localStorage.getItem("Favourites")) || [];
     let inputError = document.getElementById("inputError");
+
 
 
 
@@ -41,12 +40,34 @@ function init() {
                 let df = new DocumentFragment();
                 data.drinks.forEach(drink => {
                     let card = document.createElement("div");
-                    card.dataset.drink = JSON.stringify(drink);
-                    card.dataset.id = drink.idDrink;
-                    card.dataset.toggle = false;
+                    let id = card.dataset.id;
+                    let drinkData = card.dataset.drink;
+                    let toggle = card.dataset.toggle;
+                    drinkData = JSON.stringify(drink);
+                    id = drink.idDrink;
+                    
+                    try {
+                        let parsedValue = JSON.parse(drinkData);
+                        let exists = faveList.some(fave => JSON.stringify(fave) === JSON.stringify(parsedValue));
+                       
+                        if (!exists) {
+                            toggle = 'false';
+                      
+                        } else {
+                            toggle = 'true';
+                        }
+                        
+                    } catch (err) {
+                        console.error("Invalid JSON string", err);
+                    }
+
+                    card.setAttribute('data-toggle', toggle);
+                    card.setAttribute('data-drink', drinkData);
+                    card.setAttribute('data-id', id);
                     card.classList.add("card");
                     card.innerHTML = cardItem(drink);
                     df.append(card);
+                    console.log(toggle);
                 });
                 
                 cards.innerHTML = "";
@@ -60,17 +81,7 @@ function init() {
         });
     }
 
-    // function updateToggle() {
-    //     allCards.forEach(card => {
-    //         const drink = card.dataset.drink;
-    //         const isFavourited = faveList.some(fave => fave.idDrink === drink);
 
-    //         if (isFavourited) {
-    //             card.dataset.toggle = 'true';
-    //         }
-    //     });
-
-    // };
 
 
     // ––––––––––––––––––––––––––––––––––– SEARCH FUNCTIONALITY ––––––––––––––––––––––––––––––––––––– //
@@ -93,13 +104,34 @@ function init() {
                 cards.innerHTML = "";
                 data.drinks.forEach(drink => {
                     let card = document.createElement("div");
+                    let id = card.dataset.id;
+                    let drinkData = card.dataset.drink;
+                    let toggle = card.dataset.toggle;
+                    drinkData = JSON.stringify(drink);
+                    id = drink.idDrink;
+
+                    try {
+                        let parsedValue = JSON.parse(drinkData);
+                        let exists = faveList.some(fave => JSON.stringify(fave) === JSON.stringify(parsedValue));
+                       
+                        if (!exists) {
+                            toggle = 'false';
+                      
+                        } else {
+                            toggle = 'true';
+                        }
+                        
+                    } catch (err) {
+                        console.error("Invalid JSON string", err);
+                    }
+
+                    card.setAttribute('data-toggle', toggle);
+                    card.setAttribute('data-drink', drinkData);
+                    card.setAttribute('data-id', id);
                     card.classList.add("card");
-                    let cardInfo = cardItem(drink);
-                    card.dataset.drink = JSON.stringify(drink);
-                    card.dataset.id = drink.idDrink;
-                    card.dataset.toggle = false;
-                    card.innerHTML = cardInfo;
+                    card.innerHTML = cardItem(drink);
                     df.append(card);
+                    console.log(toggle);
                 });
                 cards.innerHTML = "";
                 cards.appendChild(df);
@@ -111,6 +143,7 @@ function init() {
             .catch((err) => {
                 console.log(err);
             });
+            
     }
 
     function searchHandle(ev) {
@@ -151,21 +184,19 @@ function init() {
             dialog.querySelector('.cardData').setAttribute('data-id', id);
             dialog.querySelector('.cardData').setAttribute('data-toggle', toggle);
             dialog.querySelector('h3').textContent = cardName;
-            
             console.log(toggle);
    
             if (toggle === 'false') {
                 faveBtn.classList.remove('bg-red-600', 'hover:bg-red-500');
                 faveBtn.classList.add('bg-blue-600', 'hover:bg-blue-500');
                 faveBtn.textContent = 'Add to favourites';
-                faveBtn.addEventListener('click', addFave);
             } else if (toggle === 'true') {
                 faveBtn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
                 faveBtn.classList.add('bg-red-600', 'hover:bg-red-500');
                 faveBtn.textContent = 'Remove favourite';
-                faveBtn.addEventListener('click', addFave);
             }
-
+            
+            faveBtn.addEventListener('click', addFave);
             btn.addEventListener('click', closeDialog);
             dialog.showModal();
             // attachMoreLessListeners(dialog);
@@ -175,14 +206,12 @@ function init() {
     function closeDialog(ev) {
         ev.preventDefault();
         let dialog = ev.target.closest('dialog');
-        // updateToggle();
         dialog.close();
         ev.stopPropagation();
     }
 
 
-    // –––––––––––––––––––––––––––––––––– FAVOURITES FUNCTIONALITY –––––––––––––––––––––––––––––––––– //
-
+    // ––––––––––––––––––––––––––––––––––– FAVOURITES FUNCTIONALITY –––––––––––––––––––––––––––––––––– //
 
     function addFave(ev) {
         ev.preventDefault();
@@ -191,7 +220,6 @@ function init() {
         let id = ev.target.closest('.cardData').dataset.id;
         let allCards = document.querySelectorAll('.card');
       
-
         try {
             let parsedValue = JSON.parse(addData);
             let exists = faveList.some(fave => JSON.stringify(fave) === JSON.stringify(parsedValue));
@@ -210,17 +238,25 @@ function init() {
                 });
           
             } else {
-                faveList.splice(parsedValue);
-                localStorage.removeItem("Favourites", JSON.stringify(faveList));
+                
+                const indexToRemove = faveList.findIndex(item => item.idDrink === parsedValue.idDrink);
+            
+                if (indexToRemove !== -1) {
+                    faveList.splice(indexToRemove, 1); 
+                }
+                
+                localStorage.setItem("Favourites", JSON.stringify(faveList)); 
+                
                 console.log('fave removed');
                 faveBtn.classList.remove('bg-red-600', 'hover:bg-red-500');
                 faveBtn.classList.add('bg-blue-600', 'hover:bg-blue-500');
                 faveBtn.textContent = 'Add to favourites';
+                
                 allCards.forEach(card => {
                     if (card.dataset.id === id) {
                         card.dataset.toggle = 'false';
                     }
-                 });
+                });
             }
             
         } catch (err) {
@@ -229,39 +265,61 @@ function init() {
     
     };
 
-    // function findFaves(ev) {
-    //     ev.preventDefault();
-    //     console.log("findFaves function triggered");
-    //     let df = new DocumentFragment();
-    //     cards.innerHTML = "";
-    //     faveList.forEach(drink => {
-    //         let card = document.createElement("div");
-    //         card.classList.add("card");
-    //         let cardInfo = cardItem(drink);
-    //         card.innerHTML = cardInfo;
-    //         df.append(card);
-    //     });
-    //     cards.innerHTML = "";
-    //     cards.appendChild(df);
-    //     document.querySelector('#cards').addEventListener('click', openDialog);
-    // };
 
-    // (() => {
-    //     document.getElementById("findFaves").addEventListener("click", findFaves);
-    // })();
 
-    // function removeFave(ev) {
-    //     ev.preventDefault();
-    //     let remBtn = ev.target.closest('.remFave');
-    //     let remFave = remBtn.dataset.drink;
-    //     console.log(remFave);
-    //     if(remFave) {
-    //         faveList.splice(JSON.parse(remFave));
-    //         console.log(faveList);
-    //         localStorage.setItem("Favourites", JSON.stringify(faveList));
-    //     }
-    // }
 
+    // –––––––––––––––––––––––––––––––––––––– FAVOURITES SEARCH –––––––––––––––––––––––––––––––––––––––– //
+
+    function findFaves(ev) {
+        ev.preventDefault();
+        console.log("findFaves function triggered");
+        cards.innerHTML = "";
+        let df = new DocumentFragment();
+        faveList.forEach(drink => {
+            let card = document.createElement("div");
+            let id = card.dataset.id;
+            let drinkData = card.dataset.drink;
+            let toggle = card.dataset.toggle;
+            drinkData = JSON.stringify(drink);
+            id = drink.idDrink;
+
+            try {
+                let parsedValue = JSON.parse(drinkData);
+                let exists = faveList.some(fave => JSON.stringify(fave) === JSON.stringify(parsedValue));
+
+                if (!exists) {
+                    toggle = 'false';
+
+                } else {
+                    toggle = 'true';
+                }
+
+            } catch (err) {
+                console.error("Invalid JSON string", err);
+            }
+
+            card.setAttribute('data-toggle', toggle);
+            card.setAttribute('data-drink', drinkData);
+            card.setAttribute('data-id', id);
+            card.classList.add("card");
+            card.innerHTML = cardItem(drink);
+            df.append(card);
+            console.log(toggle);
+        });
+
+        cards.innerHTML = "";
+        cards.appendChild(df);
+        document.querySelector('#cards').addEventListener('click', openDialog);
+    };
+
+    (() => {
+        document.getElementById("findFaves").addEventListener("click", findFaves);
+    })();
+
+
+
+
+    // ––––––––––––––––––––––––––––––––––– MORE/LESS FUNCTIONALITY –––––––––––––––––––––––––––––––––––––– //
 
     // MORE/LESS FUNCTIONALITY
 
