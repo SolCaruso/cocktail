@@ -43,6 +43,7 @@ function init() {
                     let id = card.dataset.id;
                     let drinkData = card.dataset.drink;
                     let toggle = card.dataset.toggle;
+                    
                     drinkData = JSON.stringify(drink);
                     id = drink.idDrink;
                     
@@ -179,13 +180,41 @@ function init() {
             let cardName = cardInfo.querySelector('h2').textContent;
             let btn = dialog.querySelector('.btnClose');
             let faveBtn = dialog.querySelector('.cardData');
+    
+            let drinkData = JSON.parse(drink);
+            
+            const maxLength = 100;
+            let instructions = drinkData.strInstructions;
+            let truncatedInstructions = instructions.length > maxLength ? instructions.substring(0, maxLength) + '...' : instructions;
+            let hasMore = instructions.length > maxLength;
+    
+            // Populate dialog with data
             dialog.querySelector('img').setAttribute('src', imgSrc);
             dialog.querySelector('.cardData').setAttribute('data-drink', drink);
             dialog.querySelector('.cardData').setAttribute('data-id', id);
             dialog.querySelector('.cardData').setAttribute('data-toggle', toggle);
             dialog.querySelector('h3').textContent = cardName;
+    
+            // Instructions
+            let instructionsElem = dialog.querySelector('.instructions');
+            instructionsElem.setAttribute('data-full-text', instructions);
+            instructionsElem.innerHTML = `${truncatedInstructions} ${hasMore ? '<span class="text-blue-500 cursor-pointer more">more...</span>' : ''}`;
+    
+            // Ingredients
+            let ingredientsElem = dialog.querySelector('.ingredients');
+            let ingredients = [];
+            for (let i = 1; i <= 15; i++) {
+                let ingredient = drinkData[`strIngredient${i}`];
+                let measure = drinkData[`strMeasure${i}`];
+                if (ingredient) {
+                    ingredients.push(`${measure ? measure : ''} ${ingredient}`);
+                }
+            }
+            ingredientsElem.innerHTML = ingredients.join('<br>');
+    
             console.log(toggle);
-   
+    
+            // Toggle button state
             if (toggle === 'false') {
                 faveBtn.classList.remove('bg-red-600', 'hover:bg-red-500');
                 faveBtn.classList.add('bg-blue-600', 'hover:bg-blue-500');
@@ -199,7 +228,7 @@ function init() {
             faveBtn.addEventListener('click', addFave);
             btn.addEventListener('click', closeDialog);
             dialog.showModal();
-            // attachMoreLessListeners(dialog);
+            attachMoreLessListeners(dialog);
         }
     }
 
@@ -209,6 +238,8 @@ function init() {
         dialog.close();
         ev.stopPropagation();
     }
+
+
 
 
     // ––––––––––––––––––––––––––––––––––– FAVOURITES FUNCTIONALITY –––––––––––––––––––––––––––––––––– //
@@ -320,41 +351,31 @@ function init() {
 
 
     // ––––––––––––––––––––––––––––––––––– MORE/LESS FUNCTIONALITY –––––––––––––––––––––––––––––––––––––– //
-
-    // MORE/LESS FUNCTIONALITY
-
-    // function attachMoreLessListeners(container = document) {
-    //     console.log(container);
-    //     let more = container.querySelector('.more')
-    //         console.log(more);
-    //         more.addEventListener('click', moreText);
-    // }
-
-    // function moreText () {
-    //     let instructionsElem = this.parentElement;
-    //     console.log(instructionsElem)
-    //     let fullText = instructionsElem.getAttribute('data-full-text');
-    //     instructionsElem.innerHTML = `${fullText} <span class="text-blue-500 cursor-pointer less">less...</span>`;
-    //     attachLessListener(instructionsElem.querySelector('.less'));
-    // };
-
-    // function attachLessListener(less) {
-    //     less.addEventListener('click', function () {
-    //         let instructionsElem = this.parentElement;
-    //         let fullText = instructionsElem.getAttribute('data-full-text');
-    //         let maxLength = 100;
-    //         let truncatedText = fullText.substring(0, maxLength) + '...';
-    //         instructionsElem.innerHTML = `${truncatedText} <span class="text-blue-500 cursor-pointer more">more...</span>`;
-    //         attachMoreLessListeners(instructionsElem);
-    //     });
-    // }
-
-
-    // (() => {
-    //     document.getElementById('remFave').addEventListener("click", removeFave);
-    // })();
-
     
+    function attachMoreLessListeners(container = document) {
+        let more = container.querySelector('.more');
+        if (more) {
+            more.addEventListener('click', moreText);
+        }
+    }
+
+    function moreText() {
+        let instructionsElem = this.parentElement;
+        let fullText = instructionsElem.getAttribute('data-full-text');
+        instructionsElem.innerHTML = `${fullText} <span class="text-blue-500 cursor-pointer less">less...</span>`;
+        attachLessListener(instructionsElem.querySelector('.less'));
+    }
+
+    function attachLessListener(less) {
+        less.addEventListener('click', function () {
+            let instructionsElem = this.parentElement;
+            let fullText = instructionsElem.getAttribute('data-full-text');
+            const maxLength = 100;
+            let truncatedText = fullText.substring(0, maxLength) + '...';
+            instructionsElem.innerHTML = `${truncatedText} <span class="text-blue-500 cursor-pointer more">more...</span>`;
+            attachMoreLessListeners(instructionsElem);
+        });
+    }
 }
 
 window.addEventListener("DOMContentLoaded", init);
