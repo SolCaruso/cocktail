@@ -34,3 +34,118 @@ body {
 .more:hover, .less:hover {
   text-decoration: underline;
 }
+
+
+body {
+  background: radial-gradient(circle, #eef2f6 20%, #ffffff 70%);
+  animation: gradientBallAnimation 20s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradientBallAnimation {
+  0% {
+      background-position: 0% 0%;
+  }
+  25% {
+      background-position: 100% 0%;
+  }
+  50% {
+      background-position: 100% 100%;
+  }
+  75% {
+      background-position: 0% 100%;
+  }
+  100% {
+      background-position: 0% 0%;
+  }
+}
+
+#cocktailInput:focus, #cocktailInput:active {
+  animation: subtleEffect 0.5s ease forwards;
+  outline: none; /* Removes the default outline */
+}
+
+#cocktailInput:not(:focus):not(:active) {
+  animation: subtleEffectReverse 0.5s ease forwards;
+}
+
+@keyframes subtleEffect {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.01) translateY(-1px) translateX(1px);
+    opacity: 0.75;
+  }
+}
+
+@keyframes subtleEffectReverse {
+  0% {
+    transform: scale(1.01) translateY(-1px) translateX(1px);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animation for button active/focus state */
+#findButton:focus, #findButton:active,
+#findFaves:focus, #findFaves:active {
+  animation: buttonEffect 0.5s ease forwards;
+  outline: none; /* Removes the default outline */
+}
+
+/* Animation for button returning to its original state */
+#findButton:not(:focus):not(:active),
+#findFaves:not(:focus):not(:active) {
+  animation: buttonEffectReverse 0.5s ease forwards;
+}
+
+/* Keyframe animation for the active state */
+@keyframes buttonEffect {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-1px) translateX(1px);
+    opacity: 0.85;
+  }
+}
+
+/* Keyframe animation for the reverse state */
+@keyframes buttonEffectReverse {
+  0% {
+    transform: translateY(-1px) translateX(1px);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.card-title {
+  display: inline-block;      /* Needed for text-overflow to work */
+  max-width: 13ch;            /* Limits the title to 13 characters */
+  overflow: hidden;           /* Ensures the text is clipped */
+  white-space: nowrap;        /* Prevents wrapping to a new line */
+  text-overflow: ellipsis;    /* Adds the ellipsis (...) when text is too long */
+}
+
+#cocktailInput::placeholder {
+  color: #c0c5ce; /* Custom placeholder text color (light gray) */
+  font-weight: 500; /* Sets the font weight to regular */
+  font-size: 1.1rem; /* Adjusts the size of the placeholder text */
+  opacity: 1; /* Ensures full opacity for placeholder */
+}
+
+#cocktailInput {
+  color: #80848a; /* Custom placeholder text color (light gray) */
+  font-weight: 500; /* Sets the font weight to regular */
+  font-size: 1.1rem; /* Adjusts the size of the placeholder text */
+  opacity: 1; /* Ensures full opacity for placeholder */
+}

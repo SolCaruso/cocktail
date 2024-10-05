@@ -32,7 +32,7 @@ function init() {
         }
         return res.json();
       })
-      .then((data) => {
+      .then((data) => { 
         if (data.drinks) {
           let df = new DocumentFragment();
           data.drinks.forEach((drink) => {
